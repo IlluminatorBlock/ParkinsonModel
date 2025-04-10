@@ -1,0 +1,11 @@
+subject_id,group,age,sex,mri_path,disease_duration,updrs_score,hoehn_yahr
+SIM000,PD,69,M,SIM000\SIM000_T1.nii.gz,3.6,21.0,2.5
+SIM001,Control,63,F,SIM001\SIM001_T1.nii.gz,,,
+SIM002,Control,62,M,SIM002\SIM002_T1.nii.gz,,,
+SIM003,Control,68,M,SIM003\SIM003_T1.nii.gz,,,
+SIM004,Control,66,M,SIM004\SIM004_T1.nii.gz,,,
+SIM005,Control,71,M,SIM005\SIM005_T1.nii.gz,,,
+SIM006,PD,80,M,SIM006\SIM006_T1.nii.gz,7.8,39.0,1.0
+SIM007,Control,64,F,SIM007\SIM007_T1.nii.gz,,,
+SIM008,PD,70,M,SIM008\SIM008_T1.nii.gz,1.7,29.0,2.0
+SIM009,Control,70,F,SIM009\SIM009_T1.nii.gz,,,
