@@ -2,6 +2,18 @@
 
 This project implements a novel computer vision approach to detect early signs of Parkinson's disease from MRI scans, with a focus on achieving state-of-the-art accuracy through advanced deep learning techniques.
 
+## Quick Start Guide
+
+1. **Setup the project**: Run `parkinson.bat setup` to install dependencies and generate synthetic data
+2. **Train the model**: Run `parkinson.bat train` to train the model with optimized parameters
+3. **Make predictions**: Run `parkinson.bat predict [path_to_mri_scan]` to analyze a new MRI scan
+4. **Stop training**: If needed, run `parkinson.bat stop` to terminate any training in progress
+
+Example prediction:
+```
+parkinson.bat predict D:\data\new_patient_scan.nii.gz
+```
+
 ## Project Overview
 
 Parkinson's disease (PD) is a neurodegenerative disorder that affects millions of people worldwide. Current diagnosis typically occurs after significant neurodegeneration has already occurred. This project aims to develop a computer vision system that can detect subtle brain changes associated with PD years before clinical symptoms appear.

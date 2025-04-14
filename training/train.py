@@ -191,7 +191,8 @@ def load_checkpoint(model, optimizer, checkpoint_path):
     """
     logger.info(f"Loading checkpoint from {checkpoint_path}")
     
-    checkpoint = torch.load(checkpoint_path, map_location='cpu')
+    # Fix for PyTorch 2.6+ - explicitly set weights_only=False
+    checkpoint = torch.load(checkpoint_path, map_location='cpu', weights_only=False)
     model.load_state_dict(checkpoint['model_state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
     

@@ -604,22 +604,69 @@ class MultitaskLoss(nn.Module):
         classification_weight: float = 1.0,
         contrastive_weight: float = 0.5,
         region_weight: float = 0.3,
-        contrastive_temperature: float = 0.1
+        contrastive_temperature: float = 0.1,
+        focal_gamma: float = 2.0,
+        class_weights: List[float] = None
     ):
         super().__init__()
         self.classification_weight = classification_weight
         self.contrastive_weight = contrastive_weight
         self.region_weight = region_weight
         self.temperature = contrastive_temperature
+        self.focal_gamma = focal_gamma
         
-        # Classification loss
-        self.classification_loss = nn.CrossEntropyLoss()
+        # Use class weights to address class imbalance
+        if class_weights is None:
+            # Default weights - slightly favor PD class to fix the imbalance issue
+            class_weights = [1.0, 2.0]  # [Control, PD]
+        self.class_weights = torch.tensor(class_weights)
+        
+        # Use weighted cross entropy loss to address class imbalance
+        self.classification_loss = lambda logits, targets: F.cross_entropy(
+            logits, targets, 
+            weight=self.class_weights.to(logits.device) if self.class_weights is not None else None
+        )
     
-    def contrastive_loss(self, projections):
+    def focal_loss(self, logits, labels):
+        """
+        Compute focal loss for better handling of hard examples.
+        
+        Args:
+            logits: Prediction logits
+            labels: Ground truth labels
+            
+        Returns:
+            Focal loss value
+        """
+        # Standard cross entropy
+        ce_loss = F.cross_entropy(logits, labels, reduction='none')
+        
+        # Compute probabilities
+        pt = torch.exp(-ce_loss)
+        
+        # Apply focal weighting
+        focal_weight = (1 - pt) ** self.focal_gamma
+        
+        # Compute weighted loss
+        loss = focal_weight * ce_loss
+        
+        return loss.mean()
+    
+    def contrastive_loss(self, projections, labels=None):
         """
         Compute contrastive loss (InfoNCE) on projections.
+        
+        Args:
+            projections: Projection vectors
+            labels: Optional class labels to define positive pairs
+            
+        Returns:
+            Contrastive loss value
         """
         batch_size = projections.shape[0]
+        
+        # Normalize projections for cosine similarity
+        projections = F.normalize(projections, p=2, dim=1)
         
         # Compute similarity matrix
         similarity = torch.matmul(projections, projections.T) / self.temperature
@@ -631,50 +678,91 @@ class MultitaskLoss(nn.Module):
         # For numerical stability
         similarity = similarity * mask - 1e9 * (1 - mask)
         
-        # Positive pairs: same class, different examples
-        # In a real implementation, use class labels to define positive pairs
-        # Here we use a simple assumption that adjacent examples are positive pairs
-        positives = torch.roll(torch.eye(batch_size), 1, dims=0).to(projections.device)
+        # If labels are provided, use them to define positive pairs
+        if labels is not None:
+            # Same class = positive pair
+            pos_mask = (labels.unsqueeze(0) == labels.unsqueeze(1)).float() * mask
+        else:
+            # Otherwise use adjacent examples as positive pairs (simplified approach)
+            pos_mask = torch.roll(torch.eye(batch_size), 1, dims=0).to(projections.device) * mask
         
-        # Compute loss
+        # Calculate loss
         loss = 0
-        for i in range(batch_size):
-            pos_idx = positives[i].bool()
-            if pos_idx.sum() > 0:
-                pos_logits = similarity[i, pos_idx]
-                neg_logits = similarity[i, ~pos_idx & mask[i].bool()]
-                
-                logits = torch.cat([pos_logits, neg_logits])
-                labels = torch.zeros(len(logits), device=logits.device, dtype=torch.long)
-                
-                loss += self.classification_loss(logits.unsqueeze(0), labels.unsqueeze(0))
         
-        return loss / batch_size
+        # For each example, calculate contrastive loss
+        for i in range(batch_size):
+            if pos_mask[i].sum() > 0:  # If there are positive pairs
+                # Get positive and negative similarities
+                pos_sim = similarity[i][pos_mask[i] > 0]
+                neg_sim = similarity[i][pos_mask[i] <= 0]
+                
+                if len(neg_sim) > 0:  # If there are negative pairs
+                    # For each positive pair
+                    for pos in pos_sim:
+                        # Calculate probability of picking the positive among all
+                        all_sim = torch.cat([pos.unsqueeze(0), neg_sim])
+                        logits = all_sim
+                        labels = torch.zeros(1, device=logits.device, dtype=torch.long)
+                        
+                        # Use cross entropy loss (equivalent to InfoNCE)
+                        loss += F.cross_entropy(logits.unsqueeze(0), labels)
+        
+        # Normalize by number of examples
+        return loss / batch_size if batch_size > 0 else torch.tensor(0.0, device=projections.device)
     
     def region_loss(self, region_preds, labels):
         """
         Compute region-specific loss.
         
-        In a real implementation, this would use region-specific labels.
-        Here we use a simplified approach.
+        Args:
+            region_preds: List of region-specific predictions
+            labels: Class labels
+            
+        Returns:
+            Region loss value
         """
-        # Compute consistency between region predictions
+        # Enhanced region loss with label information
         loss = 0
+        
+        # Group regions by label
+        pd_indices = (labels == 1).nonzero(as_tuple=True)[0]
+        control_indices = (labels == 0).nonzero(as_tuple=True)[0]
+        
+        # Calculate consistency within regions for same class
         for i in range(len(region_preds)):
             for j in range(i+1, len(region_preds)):
-                # Encourage consistency between regions for same class examples
+                # Get predictions for each region
                 pred_i = F.softmax(region_preds[i], dim=1)
                 pred_j = F.softmax(region_preds[j], dim=1)
                 
-                # KL divergence as consistency measure
-                loss += F.kl_div(
-                    torch.log(pred_i + 1e-10), 
-                    pred_j, 
-                    reduction='batchmean'
-                )
+                # For each class, promote consistency within that class
+                if len(pd_indices) > 0:
+                    # PD subjects should have consistent region predictions
+                    loss += F.kl_div(
+                        torch.log(pred_i[pd_indices] + 1e-10), 
+                        pred_j[pd_indices], 
+                        reduction='batchmean'
+                    )
+                
+                if len(control_indices) > 0:
+                    # Control subjects should have consistent region predictions
+                    loss += F.kl_div(
+                        torch.log(pred_i[control_indices] + 1e-10), 
+                        pred_j[control_indices], 
+                        reduction='batchmean'
+                    )
         
-        # Average loss
-        return loss / (len(region_preds) * (len(region_preds) - 1) / 2)
+        # Add regularization to ensure regions are discriminative
+        for i, region_pred in enumerate(region_preds):
+            # Each region should be predictive of the class
+            loss += F.cross_entropy(region_pred, labels)
+        
+        # Calculate total loss
+        num_comparisons = len(region_preds) * (len(region_preds) - 1) / 2
+        if num_comparisons > 0:
+            loss = loss / (num_comparisons + len(region_preds))
+        
+        return loss
     
     def forward(self, logits, labels, projections=None, region_preds=None):
         """
@@ -689,8 +777,11 @@ class MultitaskLoss(nn.Module):
         Returns:
             total_loss, loss_dict
         """
-        # Classification loss
-        cls_loss = self.classification_loss(logits, labels)
+        # Apply a temperature scaling to logits to make predictions less extreme
+        scaled_logits = logits / 1.5  # Temperature scaling
+        
+        # Classification loss with focal loss and class weights
+        cls_loss = self.focal_loss(scaled_logits, labels)
         loss_dict = {'classification': cls_loss.item()}
         
         # Total loss starts with classification
@@ -698,7 +789,7 @@ class MultitaskLoss(nn.Module):
         
         # Add contrastive loss if projections are provided
         if projections is not None and self.contrastive_weight > 0:
-            cont_loss = self.contrastive_loss(projections)
+            cont_loss = self.contrastive_loss(projections, labels)
             total_loss = total_loss + self.contrastive_weight * cont_loss
             loss_dict['contrastive'] = cont_loss.item()
         

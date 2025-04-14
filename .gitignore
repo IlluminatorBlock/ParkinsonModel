@@ -1,0 +1,28 @@
+# Ignore model files
+models/backup/
+models/pretrained/*.pt
+# Keep only best model
+!models/pretrained/best_model.pt
+
+# Ignore simulated data
+data/raw/simulated/
+# If you need to keep some metadata
+!data/raw/simulated/.gitkeep
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE folders
+.idea/
+.vscode/
+
+# Logs
+*.log
+training.log
+preprocessing.log
+
+# OS specific files
+.DS_Store
+Thumbs.db 

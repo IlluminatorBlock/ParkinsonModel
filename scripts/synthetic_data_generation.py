@@ -142,7 +142,7 @@ def add_ventricles(volume, brain_mask, size=(128, 128, 128), ventricle_intensity
     return volume, ventricle_mask
 
 
-def add_substantia_nigra(volume, brain_mask, is_pd=False, size=(128, 128, 128)):
+def add_substantia_nigra(volume, brain_mask, is_pd=False, size=(128, 128, 128), feature_strength=1.0):
     """
     Add substantia nigra to the brain volume with optional PD-related changes.
     
@@ -151,6 +151,7 @@ def add_substantia_nigra(volume, brain_mask, is_pd=False, size=(128, 128, 128)):
         brain_mask: Mask of the brain region
         is_pd: Whether to simulate Parkinson's disease changes
         size: Size of the volume
+        feature_strength: Multiplier to enhance disease features (higher = more pronounced)
         
     Returns:
         Volume with substantia nigra
@@ -193,25 +194,25 @@ def add_substantia_nigra(volume, brain_mask, is_pd=False, size=(128, 128, 128)):
     
     # Apply substantia nigra to volume (slightly darker than surrounding tissue)
     # In healthy brains, SN has a medium intensity
-    sn_intensity = 0.6 if not is_pd else 0.4
+    sn_intensity = 0.6 if not is_pd else 0.4 * (1.0 / feature_strength)  # Enhanced PD features
     volume[sn_mask] = sn_intensity
     
     # For PD, add asymmetry and further degeneration
     if is_pd:
         # Create asymmetry (one side more affected)
         asymmetry_side = random.choice([left_sn, right_sn])
-        volume[asymmetry_side & brain_mask] *= 0.8
+        volume[asymmetry_side & brain_mask] *= 0.8 * feature_strength  # Enhanced asymmetry
         
         # Add "blurred boundaries" effect for PD
         # This simulates the loss of clear boundaries in the SN
-        sn_boundary = gaussian_filter((sn_mask).astype(float), sigma=2.0) - gaussian_filter((sn_mask).astype(float), sigma=1.0)
+        sn_boundary = gaussian_filter((sn_mask).astype(float), sigma=2.0 * feature_strength) - gaussian_filter((sn_mask).astype(float), sigma=1.0)
         sn_boundary = (sn_boundary > 0.01) & ~sn_mask & brain_mask
-        volume[sn_boundary] = np.clip(volume[sn_boundary] * 0.85, 0, 1)
+        volume[sn_boundary] = np.clip(volume[sn_boundary] * (0.85 / feature_strength), 0, 1)
     
     return volume, sn_mask
 
 
-def add_basal_ganglia(volume, brain_mask, is_pd=False, size=(128, 128, 128)):
+def add_basal_ganglia(volume, brain_mask, is_pd=False, size=(128, 128, 128), feature_strength=1.0):
     """
     Add basal ganglia structures to the brain volume.
     
@@ -220,6 +221,7 @@ def add_basal_ganglia(volume, brain_mask, is_pd=False, size=(128, 128, 128)):
         brain_mask: Mask of the brain region
         is_pd: Whether to simulate Parkinson's disease changes
         size: Size of the volume
+        feature_strength: Multiplier to enhance disease features
         
     Returns:
         Volume with basal ganglia
@@ -300,12 +302,14 @@ def add_basal_ganglia(volume, brain_mask, is_pd=False, size=(128, 128, 128)):
         # Add subtle changes in connectivity patterns (modeled as intensity gradients)
         striatum_to_sn = gaussian_filter((striatum_mask).astype(float), sigma=3.0)
         connectivity_mask = (striatum_to_sn > 0.2) & (striatum_to_sn < 0.5) & brain_mask
-        volume[connectivity_mask] = np.clip(volume[connectivity_mask] * 0.9, 0, 1)
+        # Enhanced PD features in connectivity
+        volume[connectivity_mask] = np.clip(volume[connectivity_mask] * (0.9 / feature_strength), 0, 1)
     
     return volume, striatum_mask, gp_mask
 
 
-def generate_synthetic_mri(output_path, subject_id, is_pd=False, size=(128, 128, 128), add_noise=True):
+def generate_synthetic_mri(output_path, subject_id, is_pd=False, size=(128, 128, 128), add_noise=True, 
+                         contrast_enhance=1.0, feature_strength=1.0):
     """
     Generate a synthetic MRI volume with optional PD-related changes.
     
@@ -315,6 +319,8 @@ def generate_synthetic_mri(output_path, subject_id, is_pd=False, size=(128, 128,
         is_pd: Whether to simulate Parkinson's disease
         size: Size of the volume
         add_noise: Whether to add random noise
+        contrast_enhance: Factor to enhance contrast (higher = more contrast)
+        feature_strength: Multiplier for disease features (higher = more pronounced)
         
     Returns:
         Path to the generated volume
@@ -330,10 +336,10 @@ def generate_synthetic_mri(output_path, subject_id, is_pd=False, size=(128, 128,
     brain, ventricle_mask = add_ventricles(brain, brain_mask, size=size)
     
     # Add substantia nigra with optional PD changes
-    brain, sn_mask = add_substantia_nigra(brain, brain_mask, is_pd=is_pd, size=size)
+    brain, sn_mask = add_substantia_nigra(brain, brain_mask, is_pd=is_pd, size=size, feature_strength=feature_strength)
     
     # Add basal ganglia with optional PD changes
-    brain, striatum_mask, gp_mask = add_basal_ganglia(brain, brain_mask, is_pd=is_pd, size=size)
+    brain, striatum_mask, gp_mask = add_basal_ganglia(brain, brain_mask, is_pd=is_pd, size=size, feature_strength=feature_strength)
     
     # Optional: Add noise and artifacts
     if add_noise:
@@ -367,6 +373,12 @@ def generate_synthetic_mri(output_path, subject_id, is_pd=False, size=(128, 128,
     # Apply final Gaussian smoothing to make it look more realistic
     brain = gaussian_filter(brain, sigma=0.5)
     
+    # Enhance contrast if requested
+    if contrast_enhance > 1.0:
+        # Apply contrast enhancement
+        mean_val = np.mean(brain[brain_mask])
+        brain[brain_mask] = mean_val + (brain[brain_mask] - mean_val) * contrast_enhance
+    
     # Ensure values are in [0, 1]
     brain = np.clip(brain, 0, 1)
     
@@ -394,7 +406,9 @@ def generate_dataset(
     output_dir=None,
     pd_ratio=0.5,
     size=(128, 128, 128),
-    save_metadata=True
+    save_metadata=True,
+    contrast_enhance=1.0,
+    feature_strength=1.0
 ):
     """
     Generate a synthetic dataset with multiple subjects.
@@ -405,6 +419,8 @@ def generate_dataset(
         pd_ratio: Ratio of PD cases
         size: Size of the volumes
         save_metadata: Whether to save metadata
+        contrast_enhance: Factor to enhance contrast
+        feature_strength: Multiplier for disease features
         
     Returns:
         Dictionary with dataset information
@@ -440,7 +456,9 @@ def generate_dataset(
             subject_id=subject_id,
             is_pd=is_pd,
             size=size,
-            add_noise=True
+            add_noise=True,
+            contrast_enhance=contrast_enhance,
+            feature_strength=feature_strength
         )
         
         # Generate metadata
@@ -557,6 +575,8 @@ def main():
     parser.add_argument('--output_dir', type=str, default=None, help='Output directory for the generated data')
     parser.add_argument('--pd_ratio', type=float, default=0.5, help='Ratio of PD cases')
     parser.add_argument('--size', type=int, nargs=3, default=[128, 128, 128], help='Size of the volumes (D H W)')
+    parser.add_argument('--contrast_enhance', type=float, default=1.0, help='Contrast enhancement factor')
+    parser.add_argument('--feature_strength', type=float, default=1.0, help='Disease feature strength multiplier')
     parser.add_argument('--visualize', action='store_true', help='Visualize a few samples')
     parser.add_argument('--vis_dir', type=str, default=None, help='Directory to save visualizations')
     args = parser.parse_args()
@@ -567,7 +587,8 @@ def main():
         output_dir=args.output_dir,
         pd_ratio=args.pd_ratio,
         size=tuple(args.size),
-        save_metadata=True
+        contrast_enhance=args.contrast_enhance,
+        feature_strength=args.feature_strength
     )
     
     # Visualize a few samples if requested

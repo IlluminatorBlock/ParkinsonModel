@@ -1,0 +1,22 @@
+{
+    "data_dir": "data/raw/simulated",
+    "metadata": "data/metadata/simulated_metadata.json",
+    "model_dir": "models/pretrained",
+    "results_dir": "D:\\Projects\\CV\\training\\results",
+    "batch_size": 8,
+    "lr": 5e-05,
+    "weight_decay": 0.02,
+    "epochs": 150,
+    "embed_dim": 512,
+    "depth": 12,
+    "num_heads": 16,
+    "dropout": 0.3,
+    "use_contrastive": true,
+    "use_regions": true,
+    "resume": null,
+    "seed": 42,
+    "num_workers": 4,
+    "simulated": false,
+    "input_size": 128,
+    "patch_size": 8
+}

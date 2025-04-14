@@ -3,81 +3,849 @@
     {
       "subject_id": "SIM000",
       "group": "PD",
-      "age": 69,
-      "sex": "M",
+      "age": 76,
+      "sex": "F",
       "mri_path": "SIM000\\SIM000_T1.nii.gz",
-      "disease_duration": 3.6,
-      "updrs_score": 21,
-      "hoehn_yahr": 2.5
+      "disease_duration": 6.5,
+      "updrs_score": 35,
+      "hoehn_yahr": 5
     },
     {
       "subject_id": "SIM001",
-      "group": "Control",
-      "age": 63,
+      "group": "PD",
+      "age": 74,
       "sex": "F",
-      "mri_path": "SIM001\\SIM001_T1.nii.gz"
+      "mri_path": "SIM001\\SIM001_T1.nii.gz",
+      "disease_duration": 7.0,
+      "updrs_score": 47,
+      "hoehn_yahr": 5
     },
     {
       "subject_id": "SIM002",
-      "group": "Control",
-      "age": 62,
+      "group": "PD",
+      "age": 74,
       "sex": "M",
-      "mri_path": "SIM002\\SIM002_T1.nii.gz"
+      "mri_path": "SIM002\\SIM002_T1.nii.gz",
+      "disease_duration": 7.3,
+      "updrs_score": 13,
+      "hoehn_yahr": 2.5
     },
     {
       "subject_id": "SIM003",
       "group": "Control",
-      "age": 68,
-      "sex": "M",
+      "age": 80,
+      "sex": "F",
       "mri_path": "SIM003\\SIM003_T1.nii.gz"
     },
     {
       "subject_id": "SIM004",
-      "group": "Control",
-      "age": 66,
+      "group": "PD",
+      "age": 62,
       "sex": "M",
-      "mri_path": "SIM004\\SIM004_T1.nii.gz"
+      "mri_path": "SIM004\\SIM004_T1.nii.gz",
+      "disease_duration": 3.0,
+      "updrs_score": 48,
+      "hoehn_yahr": 2
     },
     {
       "subject_id": "SIM005",
       "group": "Control",
-      "age": 71,
-      "sex": "M",
+      "age": 73,
+      "sex": "F",
       "mri_path": "SIM005\\SIM005_T1.nii.gz"
     },
     {
       "subject_id": "SIM006",
-      "group": "PD",
-      "age": 80,
-      "sex": "M",
-      "mri_path": "SIM006\\SIM006_T1.nii.gz",
-      "disease_duration": 7.8,
-      "updrs_score": 39,
-      "hoehn_yahr": 1
+      "group": "Control",
+      "age": 72,
+      "sex": "F",
+      "mri_path": "SIM006\\SIM006_T1.nii.gz"
     },
     {
       "subject_id": "SIM007",
-      "group": "Control",
-      "age": 64,
-      "sex": "F",
-      "mri_path": "SIM007\\SIM007_T1.nii.gz"
+      "group": "PD",
+      "age": 77,
+      "sex": "M",
+      "mri_path": "SIM007\\SIM007_T1.nii.gz",
+      "disease_duration": 8.9,
+      "updrs_score": 49,
+      "hoehn_yahr": 1
     },
     {
       "subject_id": "SIM008",
-      "group": "PD",
-      "age": 70,
+      "group": "Control",
+      "age": 67,
       "sex": "M",
-      "mri_path": "SIM008\\SIM008_T1.nii.gz",
-      "disease_duration": 1.7,
-      "updrs_score": 29,
-      "hoehn_yahr": 2
+      "mri_path": "SIM008\\SIM008_T1.nii.gz"
     },
     {
       "subject_id": "SIM009",
       "group": "Control",
+      "age": 74,
+      "sex": "M",
+      "mri_path": "SIM009\\SIM009_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM010",
+      "group": "Control",
+      "age": 60,
+      "sex": "F",
+      "mri_path": "SIM010\\SIM010_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM011",
+      "group": "PD",
+      "age": 57,
+      "sex": "F",
+      "mri_path": "SIM011\\SIM011_T1.nii.gz",
+      "disease_duration": 5.4,
+      "updrs_score": 14,
+      "hoehn_yahr": 1
+    },
+    {
+      "subject_id": "SIM012",
+      "group": "PD",
+      "age": 65,
+      "sex": "M",
+      "mri_path": "SIM012\\SIM012_T1.nii.gz",
+      "disease_duration": 1.6,
+      "updrs_score": 21,
+      "hoehn_yahr": 3
+    },
+    {
+      "subject_id": "SIM013",
+      "group": "Control",
+      "age": 55,
+      "sex": "M",
+      "mri_path": "SIM013\\SIM013_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM014",
+      "group": "PD",
+      "age": 56,
+      "sex": "M",
+      "mri_path": "SIM014\\SIM014_T1.nii.gz",
+      "disease_duration": 7.2,
+      "updrs_score": 24,
+      "hoehn_yahr": 1.5
+    },
+    {
+      "subject_id": "SIM015",
+      "group": "PD",
+      "age": 62,
+      "sex": "M",
+      "mri_path": "SIM015\\SIM015_T1.nii.gz",
+      "disease_duration": 3.1,
+      "updrs_score": 41,
+      "hoehn_yahr": 2.5
+    },
+    {
+      "subject_id": "SIM016",
+      "group": "PD",
+      "age": 66,
+      "sex": "F",
+      "mri_path": "SIM016\\SIM016_T1.nii.gz",
+      "disease_duration": 1.8,
+      "updrs_score": 29,
+      "hoehn_yahr": 2.5
+    },
+    {
+      "subject_id": "SIM017",
+      "group": "Control",
+      "age": 79,
+      "sex": "M",
+      "mri_path": "SIM017\\SIM017_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM018",
+      "group": "PD",
+      "age": 74,
+      "sex": "M",
+      "mri_path": "SIM018\\SIM018_T1.nii.gz",
+      "disease_duration": 8.0,
+      "updrs_score": 39,
+      "hoehn_yahr": 1.5
+    },
+    {
+      "subject_id": "SIM019",
+      "group": "Control",
+      "age": 80,
+      "sex": "M",
+      "mri_path": "SIM019\\SIM019_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM020",
+      "group": "PD",
+      "age": 57,
+      "sex": "M",
+      "mri_path": "SIM020\\SIM020_T1.nii.gz",
+      "disease_duration": 6.6,
+      "updrs_score": 15,
+      "hoehn_yahr": 3
+    },
+    {
+      "subject_id": "SIM021",
+      "group": "PD",
+      "age": 77,
+      "sex": "M",
+      "mri_path": "SIM021\\SIM021_T1.nii.gz",
+      "disease_duration": 3.9,
+      "updrs_score": 46,
+      "hoehn_yahr": 2
+    },
+    {
+      "subject_id": "SIM022",
+      "group": "Control",
+      "age": 59,
+      "sex": "F",
+      "mri_path": "SIM022\\SIM022_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM023",
+      "group": "PD",
+      "age": 76,
+      "sex": "F",
+      "mri_path": "SIM023\\SIM023_T1.nii.gz",
+      "disease_duration": 2.3,
+      "updrs_score": 33,
+      "hoehn_yahr": 3
+    },
+    {
+      "subject_id": "SIM024",
+      "group": "Control",
+      "age": 64,
+      "sex": "F",
+      "mri_path": "SIM024\\SIM024_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM025",
+      "group": "Control",
+      "age": 73,
+      "sex": "M",
+      "mri_path": "SIM025\\SIM025_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM026",
+      "group": "PD",
+      "age": 55,
+      "sex": "M",
+      "mri_path": "SIM026\\SIM026_T1.nii.gz",
+      "disease_duration": 3.2,
+      "updrs_score": 16,
+      "hoehn_yahr": 2
+    },
+    {
+      "subject_id": "SIM027",
+      "group": "PD",
+      "age": 63,
+      "sex": "F",
+      "mri_path": "SIM027\\SIM027_T1.nii.gz",
+      "disease_duration": 3.0,
+      "updrs_score": 50,
+      "hoehn_yahr": 3
+    },
+    {
+      "subject_id": "SIM028",
+      "group": "Control",
+      "age": 63,
+      "sex": "M",
+      "mri_path": "SIM028\\SIM028_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM029",
+      "group": "Control",
+      "age": 58,
+      "sex": "F",
+      "mri_path": "SIM029\\SIM029_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM030",
+      "group": "Control",
+      "age": 65,
+      "sex": "M",
+      "mri_path": "SIM030\\SIM030_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM031",
+      "group": "PD",
+      "age": 60,
+      "sex": "F",
+      "mri_path": "SIM031\\SIM031_T1.nii.gz",
+      "disease_duration": 9.3,
+      "updrs_score": 29,
+      "hoehn_yahr": 1.5
+    },
+    {
+      "subject_id": "SIM032",
+      "group": "Control",
+      "age": 73,
+      "sex": "M",
+      "mri_path": "SIM032\\SIM032_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM033",
+      "group": "Control",
+      "age": 58,
+      "sex": "F",
+      "mri_path": "SIM033\\SIM033_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM034",
+      "group": "PD",
+      "age": 65,
+      "sex": "M",
+      "mri_path": "SIM034\\SIM034_T1.nii.gz",
+      "disease_duration": 7.9,
+      "updrs_score": 33,
+      "hoehn_yahr": 3
+    },
+    {
+      "subject_id": "SIM035",
+      "group": "PD",
+      "age": 74,
+      "sex": "M",
+      "mri_path": "SIM035\\SIM035_T1.nii.gz",
+      "disease_duration": 7.1,
+      "updrs_score": 47,
+      "hoehn_yahr": 3
+    },
+    {
+      "subject_id": "SIM036",
+      "group": "Control",
+      "age": 73,
+      "sex": "M",
+      "mri_path": "SIM036\\SIM036_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM037",
+      "group": "Control",
+      "age": 77,
+      "sex": "F",
+      "mri_path": "SIM037\\SIM037_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM038",
+      "group": "PD",
+      "age": 61,
+      "sex": "F",
+      "mri_path": "SIM038\\SIM038_T1.nii.gz",
+      "disease_duration": 5.1,
+      "updrs_score": 36,
+      "hoehn_yahr": 2.5
+    },
+    {
+      "subject_id": "SIM039",
+      "group": "PD",
+      "age": 76,
+      "sex": "M",
+      "mri_path": "SIM039\\SIM039_T1.nii.gz",
+      "disease_duration": 5.1,
+      "updrs_score": 33,
+      "hoehn_yahr": 2
+    },
+    {
+      "subject_id": "SIM040",
+      "group": "PD",
+      "age": 75,
+      "sex": "M",
+      "mri_path": "SIM040\\SIM040_T1.nii.gz",
+      "disease_duration": 8.4,
+      "updrs_score": 16,
+      "hoehn_yahr": 2.5
+    },
+    {
+      "subject_id": "SIM041",
+      "group": "Control",
+      "age": 63,
+      "sex": "M",
+      "mri_path": "SIM041\\SIM041_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM042",
+      "group": "PD",
+      "age": 80,
+      "sex": "M",
+      "mri_path": "SIM042\\SIM042_T1.nii.gz",
+      "disease_duration": 8.3,
+      "updrs_score": 39,
+      "hoehn_yahr": 5
+    },
+    {
+      "subject_id": "SIM043",
+      "group": "PD",
+      "age": 76,
+      "sex": "M",
+      "mri_path": "SIM043\\SIM043_T1.nii.gz",
+      "disease_duration": 5.7,
+      "updrs_score": 28,
+      "hoehn_yahr": 2.5
+    },
+    {
+      "subject_id": "SIM044",
+      "group": "Control",
+      "age": 67,
+      "sex": "M",
+      "mri_path": "SIM044\\SIM044_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM045",
+      "group": "PD",
+      "age": 77,
+      "sex": "F",
+      "mri_path": "SIM045\\SIM045_T1.nii.gz",
+      "disease_duration": 4.8,
+      "updrs_score": 23,
+      "hoehn_yahr": 2
+    },
+    {
+      "subject_id": "SIM046",
+      "group": "PD",
+      "age": 73,
+      "sex": "M",
+      "mri_path": "SIM046\\SIM046_T1.nii.gz",
+      "disease_duration": 9.0,
+      "updrs_score": 26,
+      "hoehn_yahr": 2
+    },
+    {
+      "subject_id": "SIM047",
+      "group": "Control",
+      "age": 76,
+      "sex": "F",
+      "mri_path": "SIM047\\SIM047_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM048",
+      "group": "Control",
+      "age": 66,
+      "sex": "F",
+      "mri_path": "SIM048\\SIM048_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM049",
+      "group": "Control",
+      "age": 71,
+      "sex": "F",
+      "mri_path": "SIM049\\SIM049_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM050",
+      "group": "Control",
+      "age": 74,
+      "sex": "F",
+      "mri_path": "SIM050\\SIM050_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM051",
+      "group": "Control",
+      "age": 59,
+      "sex": "M",
+      "mri_path": "SIM051\\SIM051_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM052",
+      "group": "Control",
+      "age": 73,
+      "sex": "F",
+      "mri_path": "SIM052\\SIM052_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM053",
+      "group": "PD",
+      "age": 72,
+      "sex": "F",
+      "mri_path": "SIM053\\SIM053_T1.nii.gz",
+      "disease_duration": 7.5,
+      "updrs_score": 39,
+      "hoehn_yahr": 4
+    },
+    {
+      "subject_id": "SIM054",
+      "group": "PD",
+      "age": 67,
+      "sex": "F",
+      "mri_path": "SIM054\\SIM054_T1.nii.gz",
+      "disease_duration": 9.9,
+      "updrs_score": 14,
+      "hoehn_yahr": 1
+    },
+    {
+      "subject_id": "SIM055",
+      "group": "Control",
+      "age": 56,
+      "sex": "F",
+      "mri_path": "SIM055\\SIM055_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM056",
+      "group": "Control",
       "age": 70,
       "sex": "F",
-      "mri_path": "SIM009\\SIM009_T1.nii.gz"
+      "mri_path": "SIM056\\SIM056_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM057",
+      "group": "Control",
+      "age": 58,
+      "sex": "F",
+      "mri_path": "SIM057\\SIM057_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM058",
+      "group": "Control",
+      "age": 72,
+      "sex": "F",
+      "mri_path": "SIM058\\SIM058_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM059",
+      "group": "PD",
+      "age": 78,
+      "sex": "F",
+      "mri_path": "SIM059\\SIM059_T1.nii.gz",
+      "disease_duration": 9.6,
+      "updrs_score": 36,
+      "hoehn_yahr": 2
+    },
+    {
+      "subject_id": "SIM060",
+      "group": "Control",
+      "age": 67,
+      "sex": "M",
+      "mri_path": "SIM060\\SIM060_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM061",
+      "group": "Control",
+      "age": 68,
+      "sex": "M",
+      "mri_path": "SIM061\\SIM061_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM062",
+      "group": "PD",
+      "age": 68,
+      "sex": "M",
+      "mri_path": "SIM062\\SIM062_T1.nii.gz",
+      "disease_duration": 7.4,
+      "updrs_score": 38,
+      "hoehn_yahr": 1
+    },
+    {
+      "subject_id": "SIM063",
+      "group": "PD",
+      "age": 62,
+      "sex": "M",
+      "mri_path": "SIM063\\SIM063_T1.nii.gz",
+      "disease_duration": 2.1,
+      "updrs_score": 31,
+      "hoehn_yahr": 2.5
+    },
+    {
+      "subject_id": "SIM064",
+      "group": "Control",
+      "age": 79,
+      "sex": "M",
+      "mri_path": "SIM064\\SIM064_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM065",
+      "group": "Control",
+      "age": 72,
+      "sex": "F",
+      "mri_path": "SIM065\\SIM065_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM066",
+      "group": "PD",
+      "age": 59,
+      "sex": "F",
+      "mri_path": "SIM066\\SIM066_T1.nii.gz",
+      "disease_duration": 5.5,
+      "updrs_score": 42,
+      "hoehn_yahr": 3
+    },
+    {
+      "subject_id": "SIM067",
+      "group": "PD",
+      "age": 73,
+      "sex": "M",
+      "mri_path": "SIM067\\SIM067_T1.nii.gz",
+      "disease_duration": 4.4,
+      "updrs_score": 20,
+      "hoehn_yahr": 5
+    },
+    {
+      "subject_id": "SIM068",
+      "group": "PD",
+      "age": 70,
+      "sex": "M",
+      "mri_path": "SIM068\\SIM068_T1.nii.gz",
+      "disease_duration": 6.4,
+      "updrs_score": 29,
+      "hoehn_yahr": 4
+    },
+    {
+      "subject_id": "SIM069",
+      "group": "Control",
+      "age": 79,
+      "sex": "M",
+      "mri_path": "SIM069\\SIM069_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM070",
+      "group": "Control",
+      "age": 69,
+      "sex": "F",
+      "mri_path": "SIM070\\SIM070_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM071",
+      "group": "Control",
+      "age": 70,
+      "sex": "M",
+      "mri_path": "SIM071\\SIM071_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM072",
+      "group": "PD",
+      "age": 62,
+      "sex": "M",
+      "mri_path": "SIM072\\SIM072_T1.nii.gz",
+      "disease_duration": 9.2,
+      "updrs_score": 19,
+      "hoehn_yahr": 2.5
+    },
+    {
+      "subject_id": "SIM073",
+      "group": "Control",
+      "age": 68,
+      "sex": "F",
+      "mri_path": "SIM073\\SIM073_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM074",
+      "group": "Control",
+      "age": 73,
+      "sex": "M",
+      "mri_path": "SIM074\\SIM074_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM075",
+      "group": "PD",
+      "age": 73,
+      "sex": "F",
+      "mri_path": "SIM075\\SIM075_T1.nii.gz",
+      "disease_duration": 4.6,
+      "updrs_score": 40,
+      "hoehn_yahr": 3
+    },
+    {
+      "subject_id": "SIM076",
+      "group": "PD",
+      "age": 74,
+      "sex": "F",
+      "mri_path": "SIM076\\SIM076_T1.nii.gz",
+      "disease_duration": 2.9,
+      "updrs_score": 14,
+      "hoehn_yahr": 1.5
+    },
+    {
+      "subject_id": "SIM077",
+      "group": "Control",
+      "age": 72,
+      "sex": "M",
+      "mri_path": "SIM077\\SIM077_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM078",
+      "group": "PD",
+      "age": 78,
+      "sex": "M",
+      "mri_path": "SIM078\\SIM078_T1.nii.gz",
+      "disease_duration": 7.1,
+      "updrs_score": 15,
+      "hoehn_yahr": 1
+    },
+    {
+      "subject_id": "SIM079",
+      "group": "PD",
+      "age": 61,
+      "sex": "M",
+      "mri_path": "SIM079\\SIM079_T1.nii.gz",
+      "disease_duration": 6.1,
+      "updrs_score": 11,
+      "hoehn_yahr": 3
+    },
+    {
+      "subject_id": "SIM080",
+      "group": "Control",
+      "age": 59,
+      "sex": "F",
+      "mri_path": "SIM080\\SIM080_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM081",
+      "group": "Control",
+      "age": 72,
+      "sex": "F",
+      "mri_path": "SIM081\\SIM081_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM082",
+      "group": "PD",
+      "age": 71,
+      "sex": "M",
+      "mri_path": "SIM082\\SIM082_T1.nii.gz",
+      "disease_duration": 3.7,
+      "updrs_score": 19,
+      "hoehn_yahr": 3
+    },
+    {
+      "subject_id": "SIM083",
+      "group": "PD",
+      "age": 63,
+      "sex": "F",
+      "mri_path": "SIM083\\SIM083_T1.nii.gz",
+      "disease_duration": 4.7,
+      "updrs_score": 50,
+      "hoehn_yahr": 5
+    },
+    {
+      "subject_id": "SIM084",
+      "group": "Control",
+      "age": 66,
+      "sex": "M",
+      "mri_path": "SIM084\\SIM084_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM085",
+      "group": "Control",
+      "age": 60,
+      "sex": "M",
+      "mri_path": "SIM085\\SIM085_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM086",
+      "group": "Control",
+      "age": 65,
+      "sex": "M",
+      "mri_path": "SIM086\\SIM086_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM087",
+      "group": "Control",
+      "age": 68,
+      "sex": "M",
+      "mri_path": "SIM087\\SIM087_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM088",
+      "group": "PD",
+      "age": 69,
+      "sex": "M",
+      "mri_path": "SIM088\\SIM088_T1.nii.gz",
+      "disease_duration": 6.1,
+      "updrs_score": 44,
+      "hoehn_yahr": 2.5
+    },
+    {
+      "subject_id": "SIM089",
+      "group": "Control",
+      "age": 69,
+      "sex": "F",
+      "mri_path": "SIM089\\SIM089_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM090",
+      "group": "PD",
+      "age": 78,
+      "sex": "F",
+      "mri_path": "SIM090\\SIM090_T1.nii.gz",
+      "disease_duration": 8.7,
+      "updrs_score": 31,
+      "hoehn_yahr": 3
+    },
+    {
+      "subject_id": "SIM091",
+      "group": "PD",
+      "age": 70,
+      "sex": "F",
+      "mri_path": "SIM091\\SIM091_T1.nii.gz",
+      "disease_duration": 2.7,
+      "updrs_score": 40,
+      "hoehn_yahr": 2.5
+    },
+    {
+      "subject_id": "SIM092",
+      "group": "Control",
+      "age": 79,
+      "sex": "F",
+      "mri_path": "SIM092\\SIM092_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM093",
+      "group": "PD",
+      "age": 76,
+      "sex": "M",
+      "mri_path": "SIM093\\SIM093_T1.nii.gz",
+      "disease_duration": 4.1,
+      "updrs_score": 17,
+      "hoehn_yahr": 5
+    },
+    {
+      "subject_id": "SIM094",
+      "group": "PD",
+      "age": 65,
+      "sex": "F",
+      "mri_path": "SIM094\\SIM094_T1.nii.gz",
+      "disease_duration": 6.5,
+      "updrs_score": 13,
+      "hoehn_yahr": 2.5
+    },
+    {
+      "subject_id": "SIM095",
+      "group": "PD",
+      "age": 80,
+      "sex": "M",
+      "mri_path": "SIM095\\SIM095_T1.nii.gz",
+      "disease_duration": 1.3,
+      "updrs_score": 40,
+      "hoehn_yahr": 4
+    },
+    {
+      "subject_id": "SIM096",
+      "group": "Control",
+      "age": 67,
+      "sex": "M",
+      "mri_path": "SIM096\\SIM096_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM097",
+      "group": "PD",
+      "age": 78,
+      "sex": "M",
+      "mri_path": "SIM097\\SIM097_T1.nii.gz",
+      "disease_duration": 2.8,
+      "updrs_score": 10,
+      "hoehn_yahr": 2.5
+    },
+    {
+      "subject_id": "SIM098",
+      "group": "Control",
+      "age": 76,
+      "sex": "F",
+      "mri_path": "SIM098\\SIM098_T1.nii.gz"
+    },
+    {
+      "subject_id": "SIM099",
+      "group": "PD",
+      "age": 75,
+      "sex": "M",
+      "mri_path": "SIM099\\SIM099_T1.nii.gz",
+      "disease_duration": 8.1,
+      "updrs_score": 30,
+      "hoehn_yahr": 2.5
     }
   ]
 }
