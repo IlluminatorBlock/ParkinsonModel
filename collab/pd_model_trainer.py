@@ -619,6 +619,7 @@ def generate_synthetic_data(args):
 
 def run_training_pipeline(args):
     """Run the complete training pipeline"""
+    import os  # Add local import to ensure it's available
     start_time = time.time()
     logger.info("Starting Parkinson's Disease Detection Training Pipeline")
     logger.info(f"Configuration: {vars(args)}")
@@ -712,6 +713,7 @@ def run_training_pipeline(args):
 
 def main():
     """Parse arguments and run training pipeline"""
+    import os  # Add local import to ensure it's available
     parser = argparse.ArgumentParser(description="Train Parkinson's disease detection model")
     
     # Data generation parameters
