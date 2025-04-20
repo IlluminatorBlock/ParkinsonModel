@@ -465,6 +465,374 @@ def create_dataset(data_dir, metadata_file, transform, is_train=True, use_simula
         )
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Train a model for Parkinson's MRI Detection")
+    parser.add_argument("--data_dir", type=str, default="data/processed", help="Directory containing processed data")
+    parser.add_argument("--model_type", type=str, default="region_attention", choices=["region_attention", "deep_voxel_3d", "efficientnet3d"], help="Type of model to train")
+    parser.add_argument("--batch_size", type=int, default=8, help="Batch size for training")
+    parser.add_argument("--epochs", type=int, default=100, help="Number of epochs to train")
+    parser.add_argument("--learning_rate", type=float, default=0.0001, help="Learning rate")
+    parser.add_argument("--weight_decay", type=float, default=0.001, help="Weight decay for optimizer")
+    parser.add_argument("--save_dir", type=str, default="models/pretrained", help="Directory to save trained models")
+    parser.add_argument("--dropout", type=float, default=0.3, help="Dropout rate")
+    parser.add_argument("--class_weights", type=float, nargs=2, default=[1.0, 1.0], help="Class weights for [control, PD]")
+    parser.add_argument("--augmentation", type=str, default="standard", choices=["none", "standard", "strong"], help="Data augmentation strength")
+    parser.add_argument("--scheduler", type=str, default="cosine", choices=["none", "step", "cosine"], help="Learning rate scheduler")
+    parser.add_argument("--patience", type=int, default=15, help="Patience for early stopping")
+    parser.add_argument("--fold", type=int, default=5, help="Number of folds for cross-validation")
+    parser.add_argument("--model_suffix", type=str, default="", help="Suffix to add to saved model name")
+    parser.add_argument("--random_seed", type=int, default=42, help="Random seed for reproducibility")
+    return parser.parse_args()
+
+
+def train_model(model, train_loader, val_loader, args, device):
+    """
+    Train the model.
+    
+    Args:
+        model: Model to train
+        train_loader: DataLoader for training data
+        val_loader: DataLoader for validation data
+        args: Command line arguments
+        device: Device to train on
+        
+    Returns:
+        Trained model and training history
+    """
+    # Set up criterion with class weights to handle imbalance
+    class_weights = torch.tensor(args.class_weights, device=device)
+    criterion = nn.CrossEntropyLoss(weight=class_weights)
+    
+    # Set up optimizer
+    optimizer = optim.AdamW(
+        model.parameters(), 
+        lr=args.learning_rate,
+        weight_decay=args.weight_decay,
+        betas=(0.9, 0.999)
+    )
+    
+    # Set up scheduler
+    if args.scheduler == "step":
+        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.1)
+    elif args.scheduler == "cosine":
+        scheduler = optim.lr_scheduler.CosineAnnealingLR(
+            optimizer, 
+            T_max=args.epochs,
+            eta_min=1e-6
+        )
+    else:
+        scheduler = None
+    
+    # Set up early stopping
+    early_stopping = EarlyStopping(patience=args.patience, verbose=True)
+    
+    # Initialize variables
+    best_val_loss = float('inf')
+    history = {
+        'train_loss': [],
+        'val_loss': [],
+        'train_acc': [],
+        'val_acc': [],
+        'epoch': []
+    }
+    
+    # Create output directory for this run
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    run_dir = os.path.join("training/results", f"run_{timestamp}")
+    os.makedirs(run_dir, exist_ok=True)
+    
+    # Save arguments
+    with open(os.path.join(run_dir, "args.json"), 'w') as f:
+        json.dump(vars(args), f, indent=4)
+    
+    # Training loop
+    for epoch in range(args.epochs):
+        # Training phase
+        model.train()
+        train_loss = 0.0
+        train_correct = 0
+        train_total = 0
+        
+        progress_bar = tqdm(train_loader, desc=f"Epoch {epoch+1}/{args.epochs}")
+        for inputs, labels in progress_bar:
+            inputs, labels = inputs.to(device), labels.to(device)
+            
+            # Mixup augmentation (improved regularization)
+            if args.augmentation == "strong" and np.random.rand() < 0.5:
+                inputs, labels_a, labels_b, lam = mixup_data(inputs, labels)
+                
+            # Zero the parameter gradients
+            optimizer.zero_grad()
+            
+            # Forward pass
+            outputs = model(inputs)
+            
+            # Calculate loss with mixup if applied
+            if args.augmentation == "strong" and 'lam' in locals():
+                loss = mixup_criterion(criterion, outputs, labels_a, labels_b, lam)
+            else:
+                loss = criterion(outputs, labels)
+            
+            # Backward pass and optimize
+            loss.backward()
+            
+            # Gradient clipping
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+            
+            optimizer.step()
+            
+            # Statistics
+            train_loss += loss.item()
+            _, predicted = torch.max(outputs, 1)
+            train_total += labels.size(0)
+            
+            if args.augmentation == "strong" and 'lam' in locals():
+                # For mixup, calculate "soft" accuracy
+                train_correct += (lam * predicted.eq(labels_a).sum().item() + 
+                                 (1 - lam) * predicted.eq(labels_b).sum().item())
+            else:
+                train_correct += predicted.eq(labels).sum().item()
+            
+            # Update progress bar
+            progress_bar.set_postfix({
+                'loss': train_loss / (progress_bar.n + 1),
+                'acc': 100. * train_correct / train_total
+            })
+        
+        # Validation phase
+        model.eval()
+        val_loss = 0.0
+        val_correct = 0
+        val_total = 0
+        
+        with torch.no_grad():
+            for inputs, labels in val_loader:
+                inputs, labels = inputs.to(device), labels.to(device)
+                
+                # Forward pass
+                outputs = model(inputs)
+                loss = criterion(outputs, labels)
+                
+                # Statistics
+                val_loss += loss.item()
+                _, predicted = torch.max(outputs, 1)
+                val_total += labels.size(0)
+                val_correct += predicted.eq(labels).sum().item()
+        
+        # Calculate epoch metrics
+        epoch_train_loss = train_loss / len(train_loader)
+        epoch_val_loss = val_loss / len(val_loader)
+        epoch_train_acc = 100. * train_correct / train_total
+        epoch_val_acc = 100. * val_correct / val_total
+        
+        # Update history
+        history['train_loss'].append(epoch_train_loss)
+        history['val_loss'].append(epoch_val_loss)
+        history['train_acc'].append(epoch_train_acc)
+        history['val_acc'].append(epoch_val_acc)
+        history['epoch'].append(epoch + 1)
+        
+        # Print epoch results
+        print(f"Epoch {epoch+1}/{args.epochs} - "
+              f"Train Loss: {epoch_train_loss:.4f}, Train Acc: {epoch_train_acc:.2f}%, "
+              f"Val Loss: {epoch_val_loss:.4f}, Val Acc: {epoch_val_acc:.2f}%")
+        
+        # Check if this is the best model so far
+        if epoch_val_loss < best_val_loss:
+            best_val_loss = epoch_val_loss
+            save_checkpoint(model, optimizer, epoch, history, 
+                           os.path.join(args.save_dir, f"best_model{args.model_suffix}.pt"))
+        
+        # Save checkpoint at regular intervals or on final epoch
+        if (epoch + 1) % 5 == 0 or epoch + 1 == args.epochs:
+            # Save model
+            save_checkpoint(model, optimizer, epoch, history,
+                           os.path.join(args.save_dir, f"pd_model_epoch{epoch+1}{args.model_suffix}_{timestamp}.pt"))
+            
+            # Plot and save metrics
+            plot_metrics(history, run_dir, epoch + 1)
+        
+        # Update scheduler
+        if scheduler is not None:
+            scheduler.step()
+        
+        # Early stopping
+        early_stopping(epoch_val_loss, model)
+        if early_stopping.early_stop:
+            print(f"Early stopping at epoch {epoch+1}")
+            break
+    
+    # Save final metrics
+    save_metrics(history, run_dir)
+    
+    return model, history
+
+
+def create_model(args, device):
+    """
+    Create a model based on the specified type.
+    
+    Args:
+        args: Command line arguments
+        device: Device to create model on
+        
+    Returns:
+        Created model
+    """
+    input_size = (128, 128, 128)  # Default size for MRI volumes
+    
+    if args.model_type == "region_attention":
+        from models.transformers.region_attention_transformer import create_region_attention_transformer
+        model = create_region_attention_transformer(
+            input_size=input_size,
+            patch_size=16,
+            embed_dim=256,
+            depth=8,
+            num_heads=8,
+            num_classes=2,
+            dropout=args.dropout,
+            use_contrastive=True
+        )
+    elif args.model_type == "deep_voxel_3d":
+        # Improved 3D CNN for voxel-based analysis
+        model = nn.Sequential(
+            nn.Conv3d(1, 32, kernel_size=3, padding=1),
+            nn.BatchNorm3d(32),
+            nn.ReLU(),
+            nn.MaxPool3d(2),
+            
+            nn.Conv3d(32, 64, kernel_size=3, padding=1),
+            nn.BatchNorm3d(64),
+            nn.ReLU(),
+            nn.MaxPool3d(2),
+            
+            nn.Conv3d(64, 128, kernel_size=3, padding=1),
+            nn.BatchNorm3d(128),
+            nn.ReLU(),
+            nn.MaxPool3d(2),
+            
+            nn.Conv3d(128, 256, kernel_size=3, padding=1),
+            nn.BatchNorm3d(256),
+            nn.ReLU(),
+            nn.MaxPool3d(2),
+            
+            nn.Conv3d(256, 512, kernel_size=3, padding=1),
+            nn.BatchNorm3d(512),
+            nn.ReLU(),
+            nn.MaxPool3d(2),
+            
+            nn.AdaptiveAvgPool3d(1),
+            nn.Flatten(),
+            nn.Dropout(args.dropout),
+            nn.Linear(512, 128),
+            nn.ReLU(),
+            nn.Dropout(args.dropout),
+            nn.Linear(128, 2)
+        )
+    elif args.model_type == "efficientnet3d":
+        # Use EfficientNet-based 3D model
+        try:
+            import torchvision.models as models
+            from models.efficientnet3d import EfficientNet3D
+            
+            model = EfficientNet3D(
+                width_coefficient=1.0,
+                depth_coefficient=1.0,
+                dropout_rate=args.dropout,
+                num_classes=2
+            )
+        except ImportError:
+            print("EfficientNet3D not available, falling back to region_attention")
+            from models.transformers.region_attention_transformer import create_region_attention_transformer
+            model = create_region_attention_transformer(
+                input_size=input_size,
+                patch_size=16,
+                embed_dim=256,
+                depth=8,
+                num_heads=8,
+                num_classes=2,
+                dropout=args.dropout,
+                use_contrastive=True
+            )
+    else:
+        raise ValueError(f"Unknown model type: {args.model_type}")
+    
+    model = model.to(device)
+    return model
+
+
+def mixup_data(x, y, alpha=0.2):
+    """
+    Applies mixup augmentation to the batch.
+    
+    Args:
+        x: Input tensor
+        y: Target tensor
+        alpha: Mixup alpha parameter
+        
+    Returns:
+        Mixed input, target a, target b, and lambda
+    """
+    if alpha > 0:
+        lam = np.random.beta(alpha, alpha)
+    else:
+        lam = 1
+    
+    batch_size = x.size()[0]
+    index = torch.randperm(batch_size).to(x.device)
+    
+    mixed_x = lam * x + (1 - lam) * x[index, :]
+    y_a, y_b = y, y[index]
+    
+    return mixed_x, y_a, y_b, lam
+
+
+def mixup_criterion(criterion, pred, y_a, y_b, lam):
+    """
+    Mixup loss function.
+    
+    Args:
+        criterion: Loss function
+        pred: Model predictions
+        y_a: First set of targets
+        y_b: Second set of targets
+        lam: Mixup lambda value
+        
+    Returns:
+        Mixed loss
+    """
+    return lam * criterion(pred, y_a) + (1 - lam) * criterion(pred, y_b)
+
+
+class EarlyStopping:
+    """
+    Early stopping to prevent overfitting.
+    """
+    def __init__(self, patience=7, verbose=False, delta=0):
+        self.patience = patience
+        self.verbose = verbose
+        self.counter = 0
+        self.best_score = None
+        self.early_stop = False
+        self.val_loss_min = float('inf')
+        self.delta = delta
+    
+    def __call__(self, val_loss, model):
+        score = -val_loss
+        
+        if self.best_score is None:
+            self.best_score = score
+        elif score < self.best_score + self.delta:
+            self.counter += 1
+            if self.verbose:
+                print(f'EarlyStopping counter: {self.counter} out of {self.patience}')
+            if self.counter >= self.patience:
+                self.early_stop = True
+        else:
+            self.best_score = score
+            self.counter = 0
+
+
 def main():
     """
     Main training function.

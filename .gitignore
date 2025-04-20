@@ -13,16 +13,109 @@ data/raw/simulated/
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
 
 # IDE folders
 .idea/
 .vscode/
+*.swp
+*.swo
 
-# Logs
+# Logs and debugging
 *.log
 training.log
 preprocessing.log
+logs/
+.ipynb_checkpoints/
 
 # OS specific files
 .DS_Store
-Thumbs.db 
+Thumbs.db
+.directory
+desktop.ini
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+temp_*
+~*
+
+# Model files (use Git LFS for these)
+models/**/*.pt
+models/**/*.pth
+models/**/*.h5
+models/**/*.ckpt
+models/**/*.pb
+models/**/*.onnx
+models/**/*.tflite
+models/**/*.weights
+# Except small configs
+!models/**/*.json
+!models/**/*.yaml
+!models/**/*.cfg
+# Keep the improved model directory structure
+!models/improved/.gitkeep
+
+# Data files
+data/raw/**/*
+data/processed/**/*
+# Except essential metadata and configs
+!data/raw/.gitkeep
+!data/raw/improved/.gitkeep
+!data/raw/simulated/.gitkeep
+!data/processed/.gitkeep
+!data/processed/improved/.gitkeep
+!data/metadata/*.json
+!data/metadata/*.csv
+
+# Large visualization files
+visualizations/**/*.png
+visualizations/**/*.jpg
+visualizations/**/*.mp4
+visualizations/**/*.gif
+# Keep the directory structure
+!visualizations/.gitkeep
+
+# Windows specific
+*.bat
+*.ps1
+
+# Temp/large notebooks
+*-checkpoint.ipynb
+
+# Virtual environment
+venv/
+env/
+.env/
+
+# Large packaged files
+*.zip
+*.tar.gz
+*.tgz
+*.gz
+*.rar
+*.7z
+
+# Ignore large DICOM, NIFTI, and other medical image formats
+*.dcm
+*.nii
+*.nii.gz
+# Exception for small test data if needed
+!tests/data/small_test_*.nii.gz 
