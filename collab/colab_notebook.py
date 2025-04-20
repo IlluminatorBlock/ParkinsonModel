@@ -23,14 +23,10 @@ def write_file(filename, content):
   with open(f"pd_detection/{filename}", "w") as f:
     f.write(content)
 
-# Fetch the synthetic data generator script
-!curl -o pd_detection/pd_synthetic_data.py https://raw.githubusercontent.com/IlluminatorBlock/ParkinsonModel/main/collab/pd_synthetic_data.py
-
-# Fetch the model trainer script
-!curl -o pd_detection/pd_model_trainer.py https://raw.githubusercontent.com/IlluminatorBlock/ParkinsonModel/main/collab/pd_model_trainer.py
-
-# Fetch the Colab runner script
-!curl -o pd_detection/run_colab.py https://raw.githubusercontent.com/IlluminatorBlock/ParkinsonModel/main/collab/run_colab.py
+# Fetch the latest scripts (ensures we get the latest fixes)
+!curl -o pd_detection/pd_synthetic_data.py https://raw.githubusercontent.com/IlluminatorBlock/ParkinsonModel/main/collab/pd_synthetic_data.py --force
+!curl -o pd_detection/pd_model_trainer.py https://raw.githubusercontent.com/IlluminatorBlock/ParkinsonModel/main/collab/pd_model_trainer.py --force
+!curl -o pd_detection/run_colab.py https://raw.githubusercontent.com/IlluminatorBlock/ParkinsonModel/main/collab/run_colab.py --force
 
 # Make scripts executable
 !chmod +x pd_detection/*.py
@@ -41,13 +37,16 @@ def write_file(filename, content):
 
 # @title Model Training Parameters
 num_subjects = 1000  # @param {type:"slider", min:100, max:2000, step:100}
-epochs = 200  # @param {type:"slider", min:50, max:500, step:50}
+epochs = 500  # @param {type:"slider", min:50, max:500, step:50}
 batch_size = 8  # @param {type:"slider", min:2, max:16, step:2}
 feature_strength = 8.0  # @param {type:"slider", min:1.0, max:10.0, step:0.5}
 contrast_enhance = 6.0  # @param {type:"slider", min:1.0, max:10.0, step:0.5}
 use_gpu = True  # @param {type:"boolean"}
 mixed_precision = True  # @param {type:"boolean"}
 visualize_samples = True  # @param {type:"boolean"}
+generate_new_data = False  # @param {type:"boolean"}
+regenerate_data_message = "Will use existing data" if not generate_new_data else "Will generate new synthetic data"
+print(f"Data generation setting: {regenerate_data_message}")
 
 # Step 4: Create all necessary directories
 # ---------------------------------------
@@ -59,14 +58,21 @@ for directory in ["data", "data/raw", "data/raw/improved", "data/metadata",
 
 # Step 5: Generate synthetic data
 # ------------------------------
-# Run the synthetic data generation script
-!cd pd_detection && python pd_synthetic_data.py \
-  --num_subjects {num_subjects} \
-  --output_dir ../data/raw/improved \
-  --pd_ratio 0.5 \
-  --feature_strength {feature_strength} \
-  --contrast_enhance {contrast_enhance} \
-  {'--visualize' if visualize_samples else ''}
+# Run the synthetic data generation script only if generate_new_data is True
+if generate_new_data:
+    print("Generating new synthetic dataset...")
+    !cd pd_detection && python pd_synthetic_data.py \
+      --num_subjects {num_subjects} \
+      --output_dir ../data/raw/improved \
+      --pd_ratio 0.5 \
+      --feature_strength {feature_strength} \
+      --contrast_enhance {contrast_enhance} \
+      {'--visualize' if visualize_samples else ''}
+else:
+    print("Skipping data generation, using existing data...")
+    # Check if metadata file exists
+    if not os.path.exists("data/metadata/simulated_metadata.json"):
+        print("Warning: Metadata file not found. You should generate data first.")
 
 # Step 6: Train the model
 # ----------------------
