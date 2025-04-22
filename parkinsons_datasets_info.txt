@@ -1,0 +1,60 @@
+# Parkinson's Disease MRI Datasets Reference Guide
+
+## Overview
+This document contains information about MRI datasets that are relevant for Parkinson's disease detection. Our current model uses synthetic data that mimics the characteristics of these real-world datasets.
+
+## Datasets Referenced by Our Parkinson's Model
+
+1. **PPMI (Parkinson's Progression Markers Initiative)**
+   - URL: https://www.ppmi-info.org/
+   - Type: 3D T1-weighted MRI scans
+   - Contents: Longitudinal collection of imaging and clinical data from PD patients and healthy controls
+   - Access: Requires application and approval for researchers
+   - Format: DICOM/NIfTI 3D volumes
+   - Citation: Marek, K., et al. (2011). The Parkinson Progression Marker Initiative (PPMI). Progress in Neurobiology, 95(4), 629-635.
+
+2. **UK Biobank**
+   - URL: https://www.ukbiobank.ac.uk/
+   - Type: Multi-modal MRI including T1, T2, DTI
+   - Contents: Large population database (>100,000 participants) with comprehensive brain imaging
+   - Access: Requires application and approval
+   - Format: DICOM/NIfTI 3D volumes
+   - Citation: Miller, K. L., et al. (2016). Multimodal population brain imaging in the UK Biobank prospective epidemiological study. Nature Neuroscience, 19(11), 1523-1536.
+
+3. **IXI Dataset (Information eXtraction from Images)**
+   - URL: https://brain-development.org/ixi-dataset/
+   - Type: T1, T2, PD-weighted, MRA and DTI MRI
+   - Contents: Nearly 600 MR images from normal, healthy subjects collected at three hospitals in London
+   - Access: Publicly available
+   - Format: NIfTI 3D volumes
+   - Citation: IXI Dataset, Information eXtraction from Images. Hammersmith Hospital, Guy's Hospital, and Institute of Psychiatry.
+
+4. **OASIS-3**
+   - URL: https://www.oasis-brains.org/
+   - Type: T1-weighted MRI, FLAIR, and PET
+   - Contents: Longitudinal neuroimaging, clinical, cognitive, and biomarker data for normal aging and Alzheimer's Disease
+   - Access: Requires registration
+   - Format: NIfTI 3D volumes
+   - Citation: LaMontagne, P. J., et al. (2019). OASIS-3: Longitudinal Neuroimaging, Clinical, and Cognitive Dataset for Normal Aging and Alzheimer Disease. medRxiv.
+
+## Our Model's Approach
+
+The Parkinson's detection model in this project uses fully synthetic 3D MRI data (128×128×128 voxels) generated to simulate realistic brain features including:
+
+- Ventricle enlargement (common in neurodegenerative diseases)
+- Substantia nigra degeneration (hallmark of Parkinson's disease)
+- Basal ganglia alterations (affected in movement disorders)
+- Asymmetric degeneration patterns (characteristic of early PD)
+
+The synthetic data generation allows for training without the privacy concerns and access limitations of real patient data, while still capturing the relevant features needed for model development.
+
+## Using Real Data
+
+To use real datasets instead of synthetic data with our model:
+
+1. Apply for access to the relevant dataset(s)
+2. Download the MRI volumes in NIfTI format
+3. Modify the data loading component in the `create_datasets()` function
+4. Ensure preprocessing steps match the model's expected input (128×128×128 normalized volumes)
+
+The model architecture itself (DeepVoxelCNN) works with both synthetic and real 3D MRI data without modification, as long as the preprocessing steps produce consistently sized and normalized inputs. 
